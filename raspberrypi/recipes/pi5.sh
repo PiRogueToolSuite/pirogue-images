@@ -36,6 +36,11 @@ toast_me() {
 
   ### BEGIN: Pi 5 section
 
+  # Preconfigure raspi-firmware to disable the default cma= setting on the
+  # kernel command line. Don't run the hook manually, the linux-image install
+  # below will take care of it.
+  sed '/^#CMA=/a CMA=0' -i $MNT/etc/default/raspi-firmware
+
   # Configure Raspberry Pi repository
   cat > $MNT/etc/apt/sources.list.d/raspberrypi.list <<EOF
 # Only some specific packages are installed from there (see pirogue.pref):
