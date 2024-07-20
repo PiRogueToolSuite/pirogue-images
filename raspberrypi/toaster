@@ -1,0 +1,94 @@
+#!/bin/sh
+set -e
+
+export LC_ALL=C
+
+usage() {
+  echo "Usage: $0 input.img(.xz|.gz|) output.img recipes/recipe.sh"
+}
+
+# Usage check:
+in="$1"
+out="$2"
+recipe="$3"
+if [ -z "$in" ] || [ -z "$out" ] || [ -z "$recipe" ]; then
+  echo "E: missing parameters"
+  usage
+  exit 1
+fi
+
+if [ ! -f "$in" ]; then
+  echo "E: specified input file cannot be found"
+  usage
+  exit 1
+fi
+
+if [ ! -f "$recipe" ]; then
+  echo "E: specified recipe file cannot be found"
+  usage
+  exit 1
+fi
+
+# Environment check:
+if [ "$(id -u)" != 0 ]; then
+  echo "E: must run as root"
+  exit 1
+fi
+
+# Duplicate input into output:
+echo "🍞 Duplicating"
+case "$in" in
+  *.img)    cp "$in" "$out";;
+  *.img.gz) zcat "$in" > "$out";;
+  *.img.xz) xzcat "$in" > "$out";;
+  *)        echo "E: unsupported extension for specified input file"; usage; exit 1;;
+esac
+
+# Load recipe, then use functions:
+. "$recipe"
+
+# Possible resizing (image and partition table first, filesystem later):
+resize=$(resize_me 2>/dev/null || echo 0)
+if [ "$resize" != 0 ]; then
+  echo "🍞 Resizing"
+  size=$(stat -c %s "$out")
+  fallocate -l $((size + resize)) "$out"
+
+  kpartx -asv "$out"
+  loop=$(losetup -j "$out" | sed 's,:.*$,,;s,^/dev/,,')
+  echo ', +' | sfdisk --force -N 2 "/dev/$loop"
+  kpartx -dsv "$out"
+fi
+
+# Map:
+kpartx -asv "$out"
+loop=$(losetup -j "$out" | sed 's,:.*$,,;s,^/dev/,,')
+
+# Resize root filesystem:
+if [ "$resize" != 0 ]; then
+  resize2fs "/dev/mapper/${loop}p2"
+fi
+
+# Mount filesystems:
+echo "🍞 Mounting"
+MNT=$(mktemp -d -t toaster.XXXX)
+mount "/dev/mapper/${loop}p2" "$MNT"/
+for mountpoint in /boot/firmware /boot/efi; do
+  if [ -e "$MNT/$mountpoint" ]; then
+    mount "/dev/mapper/${loop}p1" "$MNT/$mountpoint"
+  fi
+done
+
+# Toast!
+echo "🍞 Modifying"
+export MNT
+toast_me
+
+# Free all resources:
+echo "🍞 Cleaning up"
+umount -R "$MNT"
+kpartx -dsv "$out"
+rmdir "$MNT"
+
+echo "🍞 Toasted!"
+echo " → $out"
