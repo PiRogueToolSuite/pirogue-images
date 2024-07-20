@@ -26,9 +26,13 @@ TOP_DIR=$(pwd)
 xz_compress() {
   FILE="$1"
   if which pixz >/dev/null 2>&1; then
+    printf 'Compressing %s with pixz...' "$FILE"
     pixz "$FILE"
+    echo ' done'
   else
+    printf 'Compressing %s with xz...' "$FILE"
     xz "$FILE"
+    echo ' done'
   fi
 }
 
