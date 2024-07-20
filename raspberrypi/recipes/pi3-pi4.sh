@@ -19,8 +19,8 @@ toast_me() {
   rm -f $MNT/etc/ssh/ssh_host_*
   chroot $MNT systemctl enable ssh
   # Change the hostname
-  echo "127.0.1.1 pirogue.local pirogue" >> $MNT/etc/hosts
-  echo "::1 pirogue.local pirogue"       >> $MNT/etc/hosts
+  echo "127.0.1.1	pirogue.local pirogue" >> $MNT/etc/hosts
+  echo "::1		pirogue.local pirogue" >> $MNT/etc/hosts
   echo "pirogue" > $MNT/etc/hostname
   # Add PTS PPA
   chroot $MNT wget -O /etc/apt/sources.list.d/pirogue.list https://pts-project.org/debian-12/pirogue.list
