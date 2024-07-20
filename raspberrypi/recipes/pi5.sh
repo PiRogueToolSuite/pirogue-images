@@ -33,4 +33,33 @@ toast_me() {
   # Add PTS PPA
   chroot $MNT wget -O /etc/apt/sources.list.d/pirogue.list https://pts-project.org/debian-12/pirogue.list
   chroot $MNT wget -O /etc/apt/trusted.gpg.d/pirogue.asc   https://pts-project.org/debian-12/Key.gpg
+
+  ### BEGIN: Pi 5 section
+
+  # Configure Raspberry Pi repository
+  cat > $MNT/etc/apt/sources.list.d/raspberrypi.list <<EOF
+# Only some specific packages are installed from there (see pirogue.pref):
+
+deb http://archive.raspberrypi.com/debian/ bookworm main
+EOF
+  cat > $MNT/etc/apt/preferences.d/pirogue.pref <<EOF
+# Make sure to only install specific packages from there (see raspberrypi.list):
+
+Package: *
+Pin: origin archive.raspberrypi.com
+Pin-Priority: -1
+
+Package: linux-image-* firmware-brcm80211
+Pin: origin archive.raspberrypi.com
+Pin-Priority: 500
+EOF
+  cp files/raspberrypi-archive-stable.gpg $MNT/etc/apt/trusted.gpg.d
+
+  # Install required packages. The firmware-brcm80211 package ships some files
+  # already owned by raspi-firmware, hence the dpkg option.
+  chroot $MNT apt-get update
+  chroot $MNT apt-get install -y -o Dpkg::Options::='--force-overwrite' linux-image-rpi-2712 firmware-brcm80211
+  chroot $MNT apt-get clean
+
+  ### END: Pi 5 section
 }
