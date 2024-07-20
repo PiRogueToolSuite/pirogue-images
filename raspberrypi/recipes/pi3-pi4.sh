@@ -19,9 +19,7 @@ toast_me() {
   rm -f $MNT/etc/ssh/ssh_host_*
   chroot $MNT systemctl enable ssh
   # Change the hostname
-  echo "127.0.0.1 pirogue"               >> $MNT/etc/hosts
   echo "127.0.0.1 pirogue.local pirogue" >> $MNT/etc/hosts
-  echo "::1 pirogue"                     >> $MNT/etc/hosts
   echo "::1 pirogue.local pirogue"       >> $MNT/etc/hosts
   echo "pirogue" > $MNT/etc/hostname
   # Add PTS PPA
