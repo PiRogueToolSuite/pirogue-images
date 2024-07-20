@@ -21,7 +21,18 @@ MANIFEST=$(realpath MANIFEST.txt)
 TOP_DIR=$(pwd)
 
 
-# Helper to build the manifest:
+# Helpers:
+#  - prefer parallel compression if available:
+xz_compress() {
+  FILE="$1"
+  if which pixz >/dev/null 2>&1; then
+    pixz "$FILE"
+  else
+    xz "$FILE"
+  fi
+}
+
+#  - compute checksum and remember both target file and checksum file:
 checksum_and_publish() {
   FILE="$1"
   sha256sum "$FILE" > "$FILE.sha256"
@@ -47,8 +58,8 @@ rm -f $MANIFEST
   # Modify, compress, and checksum:
   sudo ./toaster $RASPBERRYPI_IMG.xz "$PIROGUE34_IMG" recipes/pi3-pi4.sh
   sudo ./toaster $RASPBERRYPI_IMG.xz "$PIROGUE5E_IMG" recipes/pi5.sh
-  pixz "$PIROGUE34_IMG"
-  pixz "$PIROGUE5E_IMG"
+  xz_compress "$PIROGUE34_IMG"
+  xz_compress "$PIROGUE5E_IMG"
   checksum_and_publish "$PIROGUE34_IMG.xz"
   checksum_and_publish "$PIROGUE5E_IMG.xz"
 )
