@@ -1,0 +1,54 @@
+#!/bin/sh
+set -e
+
+NOW=$(date +'%Y-%m-%d')
+
+# Raspberry Pi images are built by modifying a Debian 12 image for the Raspberry
+# Pi 4 family:
+RASPBERRYPI_IMG_URL=https://raspi.debian.net/tested/20231109_raspi_4_bookworm.img.xz
+RASPBERRYPI_SHA_URL="$RASPBERRYPI_IMG_URL.sha256"
+
+# Use a stable name to avoid leaving various files behind when the URL gets
+# updated:
+RASPBERRYPI_IMG=raspi_4_bookworm.img
+
+# Basename for the target images:
+PIROGUE34_IMG="PiRogue-OS-12-Pi3_and_Pi4-$NOW.img"
+PIROGUE5E_IMG="PiRogue-OS-12-Pi5-Experimental-$NOW.img"
+
+# List of things we produce:
+MANIFEST=$(realpath MANIFEST.txt)
+TOP_DIR=$(pwd)
+
+
+# Helper to build the manifest:
+checksum_and_publish() {
+  FILE="$1"
+  sha256sum "$FILE" > "$FILE.sha256"
+  SUB_DIR=$(pwd | sed "s,^$TOP_DIR/,,")
+  echo "$SUB_DIR/$FILE"        >> "$MANIFEST"
+  echo "$SUB_DIR/$FILE.sha256" >> "$MANIFEST"
+}
+
+
+# Start afresh, manifest-wise:
+rm -f $MANIFEST
+
+# We might need to descend into different directories, subshells are
+# a way to do that:
+(
+  # Download and check (after switching to the stable name):
+  cd raspberrypi
+  wget -O $RASPBERRYPI_IMG.xz        "$RASPBERRYPI_IMG_URL"
+  wget -O $RASPBERRYPI_IMG.xz.sha256 "$RASPBERRYPI_SHA_URL"
+  sed "s/  .*$/  $RASPBERRYPI_IMG.xz/" -i $RASPBERRYPI_IMG.xz.sha256
+  shasum -c $RASPBERRYPI_IMG.xz.sha256
+
+  # Modify, compress, and checksum:
+  sudo ./toaster $RASPBERRYPI_IMG.xz "$PIROGUE34_IMG" recipes/pi3-pi4.sh
+  sudo ./toaster $RASPBERRYPI_IMG.xz "$PIROGUE5E_IMG" recipes/pi5.sh
+  pixz "$PIROGUE34_IMG"
+  pixz "$PIROGUE5E_IMG"
+  checksum_and_publish "$PIROGUE34_IMG.xz"
+  checksum_and_publish "$PIROGUE5E_IMG.xz"
+)
