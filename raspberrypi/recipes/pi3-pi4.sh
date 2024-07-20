@@ -12,13 +12,15 @@ toast_me() {
   chroot $MNT adduser pi sudo
   chroot $MNT adduser pi plugdev
   echo "pi:raspberry" | chroot $MNT chpasswd
-  # Force generate SSH host keys if they exist
+  # Let's make sure we don't ship any SSH host keys. Also work around upstream
+  # bug leading ssh.service to try and start before SSH host keys have been
+  # generated (https://salsa.debian.org/raspi-team/image-specs/-/issues/72):
+  # disable ssh.service here, and let the rpi-generate-ssh-host-keys.service
+  # enable+start it when everything is ready.
   rm -f $MNT/etc/ssh/ssh_host_*
-  # Work around longstanding bug (ssh fails to start until host keys
-  # have been generated on the target), until it's fixed upstream:
-  if ! grep -qs ^Before= $MNT/etc/systemd/system/rpi-generate-ssh-host-keys.service; then
-    sed '/^Description=/a Before=sshd.service' -i $MNT/etc/systemd/system/rpi-generate-ssh-host-keys.service
-  fi
+  chroot $MNT systemctl disable ssh.service
+  sed '/^ExecStart=/a ExecStart=/usr/bin/systemctl enable --now ssh.service' \
+      -i $MNT/etc/systemd/system/rpi-generate-ssh-host-keys.service
   # Change the hostname
   echo "127.0.1.1	pirogue.local pirogue" >> $MNT/etc/hosts
   echo "::1		pirogue.local pirogue" >> $MNT/etc/hosts
