@@ -8,8 +8,9 @@ toast_me() {
   chroot $MNT apt-get install -y wget sudo avahi-daemon
   chroot $MNT apt-get clean
   # Ensure we have the pi user
-  chroot $MNT useradd -s /bin/bash -Gsudo -m pi
-  chroot $MNT usermod -aG plugdev pi
+  chroot $MNT adduser --disabled-password --gecos '' pi
+  chroot $MNT adduser pi sudo
+  chroot $MNT adduser pi plugdev
   echo "pi:raspberry" | chroot $MNT chpasswd
   # Force generate SSH host keys if they exist and enable SSH
   rm -f $MNT/etc/ssh/ssh_host_*
