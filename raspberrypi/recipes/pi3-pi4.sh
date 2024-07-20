@@ -11,10 +11,6 @@ toast_me() {
   chroot $MNT useradd -s /bin/bash -Gsudo -m pi
   chroot $MNT usermod -aG plugdev pi
   echo "pi:raspberry" | chroot $MNT chpasswd
-  # Disable root login on SSH
-  mkdir -p $MNT/etc/ssh/sshd_config.d/
-  echo "PermitEmptyPasswords no" > $MNT/etc/ssh/sshd_config.d/pirogue-ssh.conf
-  echo "PermitRootLogin no" >> $MNT/etc/ssh/sshd_config.d/pirogue-ssh.conf
   # Force generate SSH host keys if they exist and enable SSH
   rm -f $MNT/etc/ssh/ssh_host_*
   chroot $MNT systemctl enable ssh
