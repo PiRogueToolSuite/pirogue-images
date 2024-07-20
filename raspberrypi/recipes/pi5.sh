@@ -41,6 +41,15 @@ toast_me() {
   # below will take care of it.
   sed '/^#CMA=/a CMA=0' -i $MNT/etc/default/raspi-firmware
 
+  # Make sure the resize happens during the first boot: the image-specs build
+  # deletes the hooks after deploying them in the initramfs (for the Debian
+  # kernel), and we need them back to include everything we need for the new
+  # initramfs (for the Raspberry Pi kernel).
+  install -m 755 -o root -g root files/rpi-resizerootfs.hook \
+      $MNT/etc/initramfs-tools/hooks/rpi-resizerootfs
+  install -m 755 -o root -g root files/rpi-resizerootfs.script \
+      $MNT/etc/initramfs-tools/scripts/local-bottom/rpi-resizerootfs
+
   # Configure Raspberry Pi repository
   cat > $MNT/etc/apt/sources.list.d/raspberrypi.list <<EOF
 # Only some specific packages are installed from there (see pirogue.pref):
@@ -65,6 +74,10 @@ EOF
   chroot $MNT apt-get update
   chroot $MNT apt-get install -y -o Dpkg::Options::='--force-overwrite' linux-image-rpi-2712 firmware-brcm80211
   chroot $MNT apt-get clean
+
+  # Make sure the resize doesn't happen past the first boot
+  rm -f $MNT/etc/initramfs-tools/hooks/rpi-resizerootfs
+  rm -f $MNT/etc/initramfs-tools/scripts/local-bottom/rpi-resizerootfs
 
   ### END: Pi 5 section
 }
