@@ -12,9 +12,8 @@ toast_me() {
   chroot $MNT adduser pi sudo
   chroot $MNT adduser pi plugdev
   echo "pi:raspberry" | chroot $MNT chpasswd
-  # Force generate SSH host keys if they exist and enable SSH
+  # Force generate SSH host keys if they exist
   rm -f $MNT/etc/ssh/ssh_host_*
-  chroot $MNT systemctl enable ssh
   # Change the hostname
   echo "127.0.1.1	pirogue.local pirogue" >> $MNT/etc/hosts
   echo "::1		pirogue.local pirogue" >> $MNT/etc/hosts
