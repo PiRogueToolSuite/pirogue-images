@@ -5,7 +5,7 @@ NOW=$(date +'%Y-%m-%d')
 
 # Raspberry Pi images are built by modifying a Debian 12 image for the Raspberry
 # Pi 4 family:
-RASPBERRYPI_IMG_URL=https://raspi.debian.net/tested/20231109_raspi_4_bookworm.img.xz
+RASPBERRYPI_IMG_URL=https://pirogue.apt.debamax.com/raspi-images/raspi_4_bookworm.img.xz
 RASPBERRYPI_SHA_URL="$RASPBERRYPI_IMG_URL.sha256"
 
 # Use a stable name to avoid leaving various files behind when the URL gets
