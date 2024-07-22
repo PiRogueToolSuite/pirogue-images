@@ -87,6 +87,7 @@ toast_me
 # Free all resources:
 echo "🍞 Cleaning up"
 umount -R "$MNT"
+zerofree "/dev/mapper/${loop}p2"
 kpartx -dsv "$out"
 rmdir "$MNT"
 
