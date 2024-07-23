@@ -91,5 +91,12 @@ zerofree "/dev/mapper/${loop}p2"
 kpartx -dsv "$out"
 rmdir "$MNT"
 
+# Adjust metadata: instead of leaving generated files owned by root:root, use
+# the current directory's uid and gid.
+echo "🍞 Adjusting metadata"
+uid=$(stat -c '%u' .)
+gid=$(stat -c '%u' .)
+chown "$uid:$gid" "$out"
+
 echo "🍞 Toasted!"
 echo " → $out"
