@@ -30,26 +30,26 @@ xz_compress() {
   # compressed images (as opposed to checksums for the uncompressed images). To
   # make sure everything is consistent, compare checksum of the original file
   # vs. checksum of a decompressed compressed image:
-  printf 'Computing checksum for %s...' "$FILE"
+  echo "Computing checksum for $FILE..."
   SUM1=$(sha256sum "$FILE" | awk '{print $1}')
-  echo " $SUM1"
+  echo "  $SUM1"
 
   if which pixz >/dev/null 2>&1; then
-    printf 'Compressing %s with pixz...' "$FILE"
+    echo "Compressing $FILE with pixz..."
     pixz "$FILE"
-    echo ' done'
+    echo '  done'
   else
-    printf 'Compressing %s with xz...' "$FILE"
+    echo "Compressing $FILE with xz..."
     xz "$FILE"
-    echo ' done'
+    echo '  done'
   fi
 
-  printf 'Computing checksum for %s after decompression...' "$FILE"
+  echo "Computing checksum for $FILE after decompression..."
   SUM2=$(xz -c -d "$FILE.xz" | sha256sum | awk '{print $1}')
   if [ "$SUM1" = "$SUM2" ]; then
-    echo " $SUM2 (match)"
+    echo "  $SUM2 (match)"
   else
-    echo " $SUM2 (NO MATCH), exiting!"
+    echo "  $SUM2 (NO MATCH), exiting!"
     exit 1
   fi
 }
