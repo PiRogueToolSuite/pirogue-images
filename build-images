@@ -65,7 +65,7 @@ checksum_and_publish() {
 
 
 # Start afresh, manifest-wise:
-rm -f $MANIFEST
+rm -f "$MANIFEST"
 
 # We might need to descend into different directories, subshells are
 # a way to do that:
