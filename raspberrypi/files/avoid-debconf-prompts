@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# A number of packages are going to ask questions via debconf prompts. Since we
+# know which answers are the right ones, set the right values and mark those
+# questions as seen, instead of having users follow documentation.
+#
+# See https://github.com/PiRogueToolSuite/pirogue-images/issues/3
+#
+# Reminder: debconf-set-selections comes with debconf, debconf-get-selections is
+# shipped in the debconf-utils package (not installed by default).
+set -e
+
+cat <<EOF | debconf-set-selections -v
+iptables-persistent iptables-persistent/autosave_v4 boolean false
+iptables-persistent iptables-persistent/autosave_v4 seen true
+iptables-persistent iptables-persistent/autosave_v6 boolean false
+iptables-persistent iptables-persistent/autosave_v6 seen true
+
+wireshark-common wireshark-common/install-setuid boolean true
+wireshark-common wireshark-common/install-setuid seen true
+EOF

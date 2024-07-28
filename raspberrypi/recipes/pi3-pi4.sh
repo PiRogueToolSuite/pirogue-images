@@ -33,4 +33,8 @@ toast_me() {
   # Add PTS PPA
   chroot $MNT wget -O /etc/apt/sources.list.d/pirogue.list https://pts-project.org/debian-12/pirogue.list
   chroot $MNT wget -O /etc/apt/trusted.gpg.d/pirogue.asc   https://pts-project.org/debian-12/Key.gpg
+
+  # Make initial installation easier on users:
+  install -m 755 -o root -g root files/avoid-debconf-prompts $MNT/root/avoid-debconf-prompts
+  chroot $MNT /root/avoid-debconf-prompts && rm -f $MNT/root/avoid-debconf-prompts
 }

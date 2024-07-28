@@ -34,6 +34,10 @@ toast_me() {
   chroot $MNT wget -O /etc/apt/sources.list.d/pirogue.list https://pts-project.org/debian-12/pirogue.list
   chroot $MNT wget -O /etc/apt/trusted.gpg.d/pirogue.asc   https://pts-project.org/debian-12/Key.gpg
 
+  # Make initial installation easier on users:
+  install -m 755 -o root -g root files/avoid-debconf-prompts $MNT/root/avoid-debconf-prompts
+  chroot $MNT /root/avoid-debconf-prompts && rm -f $MNT/root/avoid-debconf-prompts
+
   ### BEGIN: Pi 5 section
 
   # Preconfigure raspi-firmware to disable the default cma= setting on the
