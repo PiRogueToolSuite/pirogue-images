@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# Tweak hostname and SSID
+set -e
+
+DEV="$1"
+N="$2"
+if [ -z "$DEV" ] || [ -z "$N" ]; then
+  echo "E: $0 /dev/sd-card number"
+  exit 1
+fi
+
+MNT=/mnt
+
+sudo mount ${DEV}2 $MNT
+
+sudo sed "s/pirogue/pirogue-$N/"  -i $MNT/etc/hostname
+sudo sed "s/pirogue/pirogue-$N/g" -i $MNT/etc/hosts
+
+sudo mkdir -p $MNT/var/lib/pirogue/config/
+echo "WIFI_NETWORK_NAME=PiRogue$N" | sudo tee -a $MNT/var/lib/pirogue/config/pirogue.user.env
+
+sudo umount $MNT
