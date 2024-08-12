@@ -1,5 +1,9 @@
 # This recipe is sourced by the toaster, don't try to run it!
 
+resize_me() {
+  echo "2000"
+}
+
 # shellcheck disable=SC2086
 toast_me() {
   echo "nameserver 1.1.1.1" > $MNT/etc/resolv.conf
@@ -70,4 +74,8 @@ toast_me() {
   rm -f $MNT/etc/initramfs-tools/scripts/local-bottom/rpi-resizerootfs
 
   ### END: Pi 5 section
+
+  # Update and provision cache
+  chroot $MNT apt-get update
+  chroot $MNT apt-get install -y pirogue-base --download-only
 }
