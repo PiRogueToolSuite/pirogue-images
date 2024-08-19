@@ -54,25 +54,6 @@ toast_me() {
   install -m 755 -o root -g root files/rpi-resizerootfs.script \
       $MNT/etc/initramfs-tools/scripts/local-bottom/rpi-resizerootfs
 
-  # Configure Raspberry Pi repository
-  cat > $MNT/etc/apt/sources.list.d/raspberrypi.list <<EOF
-# Only some specific packages are installed from there (see pirogue.pref):
-
-deb http://archive.raspberrypi.com/debian/ bookworm main
-EOF
-  cat > $MNT/etc/apt/preferences.d/pirogue.pref <<EOF
-# Make sure to only install specific packages from there (see raspberrypi.list):
-
-Package: *
-Pin: origin archive.raspberrypi.com
-Pin-Priority: -1
-
-Package: linux-image-* firmware-brcm80211
-Pin: origin archive.raspberrypi.com
-Pin-Priority: 500
-EOF
-  cp files/raspberrypi-archive-stable.gpg $MNT/etc/apt/trusted.gpg.d
-
   # Install required packages. The firmware-brcm80211 package ships some files
   # already owned by raspi-firmware, hence the dpkg option.
   chroot $MNT apt-get update
