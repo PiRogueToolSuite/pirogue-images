@@ -13,8 +13,8 @@ RASPBERRYPI_SHA_URL="$RASPBERRYPI_IMG_URL.sha256"
 RASPBERRYPI_IMG=raspi_4_bookworm.img
 
 # Basename for the target images:
-PIROGUE34_IMG="PiRogue-OS-12-Pi3_and_Pi4-$NOW.img"
-PIROGUE5E_IMG="PiRogue-OS-12-Pi5-Experimental-$NOW.img"
+PIROGUE34_IMG="PiRogue-OS-12-Pi3_and_Pi4-$NOW-workshop.img"
+PIROGUE5E_IMG="PiRogue-OS-12-Pi5-Experimental-$NOW-workshop.img"
 
 # List of things we produce:
 MANIFEST=$(realpath MANIFEST.txt)
@@ -79,9 +79,9 @@ rm -f "$MANIFEST"
 
   # Modify, compress, and checksum:
   sudo ./toaster $RASPBERRYPI_IMG.xz "$PIROGUE34_IMG" recipes/pi3-pi4.sh
-  sudo ./toaster $RASPBERRYPI_IMG.xz "$PIROGUE5E_IMG" recipes/pi5.sh
+#  sudo ./toaster $RASPBERRYPI_IMG.xz "$PIROGUE5E_IMG" recipes/pi5.sh
   xz_compress "$PIROGUE34_IMG"
-  xz_compress "$PIROGUE5E_IMG"
+#  xz_compress "$PIROGUE5E_IMG"
   checksum_and_publish "$PIROGUE34_IMG.xz"
-  checksum_and_publish "$PIROGUE5E_IMG.xz"
+#  checksum_and_publish "$PIROGUE5E_IMG.xz"
 )
