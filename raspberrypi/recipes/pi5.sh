@@ -43,7 +43,7 @@ toast_me() {
   # Add a third directory with packages required for Pi 5 support (which would
   # otherwise be problematic on regular PiRogue installations, due to the file
   # conflicts between raspi-firmware and firmware-brcm80211):
-  echo 'deb https://pts-project.org/debian-12/pirogue-3rd-party-pi5 ./' >> $MNT/etc/apt/sources.list.d/pirogue.list
+  echo 'deb https://pts-project.org/debian-12-virogue/pirogue-3rd-party-pi5 ./' >> $MNT/etc/apt/sources.list.d/pirogue.list
 
   # Preconfigure raspi-firmware to disable the default cma= setting on the
   # kernel command line. Don't run the hook manually, the linux-image install
