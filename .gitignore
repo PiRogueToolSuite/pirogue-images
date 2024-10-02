@@ -1,2 +1,8 @@
 .DS_Store
 .idea/
+*.swp
+MANIFEST.txt
+raspberrypi/*.img
+raspberrypi/*.img.xz
+raspberrypi/*.sha256
+
