@@ -11,11 +11,6 @@
 set -e
 
 cat <<EOF | debconf-set-selections -v
-iptables-persistent iptables-persistent/autosave_v4 boolean false
-iptables-persistent iptables-persistent/autosave_v4 seen true
-iptables-persistent iptables-persistent/autosave_v6 boolean false
-iptables-persistent iptables-persistent/autosave_v6 seen true
-
 wireshark-common wireshark-common/install-setuid boolean true
 wireshark-common wireshark-common/install-setuid seen true
 EOF
