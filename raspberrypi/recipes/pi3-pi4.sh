@@ -14,6 +14,7 @@ toast_me() {
   chroot $MNT adduser pi sudo
   chroot $MNT adduser pi plugdev
   echo "pi:raspberry" | chroot $MNT chpasswd
+  chroot $MNT chage -d0 pi
 
   # Let's make sure we don't ship any SSH host keys. Also work around upstream
   # bug leading ssh.service to try and start before SSH host keys have been
