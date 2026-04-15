@@ -3,18 +3,18 @@ set -e
 
 NOW=$(date +'%Y-%m-%d')
 
-# Raspberry Pi images are built by modifying a Debian 12 image for the Raspberry
+# Raspberry Pi images are built by modifying a Debian 13 image for the Raspberry
 # Pi 4 family:
-RASPBERRYPI_IMG_URL=https://pirogue.apt.debamax.com/raspi-images/raspi_4_bookworm.img.xz
+RASPBERRYPI_IMG_URL=https://pirogue.apt.debamax.com/raspi-images/raspi_4_trixie.img.xz
 RASPBERRYPI_SHA_URL="$RASPBERRYPI_IMG_URL.sha256"
 
 # Use a stable name to avoid leaving various files behind when the URL gets
 # updated:
-RASPBERRYPI_IMG=raspi_4_bookworm.img
+RASPBERRYPI_IMG=raspi_4_trixie.img
 
 # Basename for the target images:
-PIROGUE34_IMG="PiRogue-OS-12-Pi3_and_Pi4-$NOW.img"
-PIROGUE5E_IMG="PiRogue-OS-12-Pi5-Experimental-$NOW.img"
+PIROGUE34_IMG="PiRogue-OS-13-Pi3_and_Pi4-$NOW.img"
+PIROGUE5E_IMG="PiRogue-OS-13-Pi5-Experimental-$NOW.img"
 
 # List of things we produce:
 MANIFEST=$(realpath MANIFEST.txt)
