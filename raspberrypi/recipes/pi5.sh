@@ -41,10 +41,9 @@ toast_me() {
 
   ### BEGIN: Pi 5 section
 
-  # Add a third directory with packages required for Pi 5 support (which would
-  # otherwise be problematic on regular PiRogue installations, due to the file
-  # conflicts between raspi-firmware and firmware-brcm80211):
-  echo 'deb https://pts-project.org/debian-12/pirogue-3rd-party-pi5 ./' >> $MNT/etc/apt/sources.list.d/pirogue.list
+  # Enable backports, since we need a recent kernel (>= 6.18, while Debian 13
+  # ships 6.12) to get basic support for the Pi 5:
+  echo 'deb http://deb.debian.org/debian trixie-backports main non-free-firmware' >> $MNT/etc/apt/sources.list.d/backports.list
 
   # Preconfigure raspi-firmware to disable the default cma= setting on the
   # kernel command line. Don't run the hook manually, the linux-image install
@@ -60,10 +59,10 @@ toast_me() {
   install -m 755 -o root -g root files/rpi-resizerootfs.script \
       $MNT/etc/initramfs-tools/scripts/local-bottom/rpi-resizerootfs
 
-  # Install required packages. The firmware-brcm80211 package ships some files
-  # already owned by raspi-firmware, hence the dpkg option.
+  # Install the kernel from backports. Pick firmware-brcm80211 as well to be on
+  # the safe side.
   chroot $MNT apt-get update
-  chroot $MNT apt-get install -y -o Dpkg::Options::='--force-overwrite' linux-image-rpi-2712 firmware-brcm80211
+  chroot $MNT apt-get install -y -o Dpkg::Options::='--force-overwrite' linux-image-arm64/trixie-backports firmware-brcm80211/trixie-backports
   chroot $MNT apt-get clean
 
   # Make sure the resize doesn't happen past the first boot
