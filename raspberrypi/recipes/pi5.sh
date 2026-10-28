@@ -46,8 +46,8 @@ toast_me() {
   #
   # Plot twist, that regressed so we're using a known-working version (see
   # details in https://github.com/PiRogueToolSuite/pirogue-images/issues/9):
-  # The following gives us 6.19.14+1~bpo13+1.
-  echo 'deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260508T024741Z/ trixie-backports main non-free-firmware' > $MNT/etc/apt/sources.list.d/backports.list
+  # The following gives us 7.0.13+1~bpo13+1.
+  echo 'deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260711T202405Z/ trixie-backports main non-free-firmware' > $MNT/etc/apt/sources.list.d/backports.list
 
   # Preconfigure raspi-firmware to disable the default cma= setting on the
   # kernel command line. Don't run the hook manually, the linux-image install
@@ -79,7 +79,7 @@ toast_me() {
 #
 # Link: https://github.com/PiRogueToolSuite/pirogue-images/issues/9
 Package: linux-base-arm64 linux-image-arm64
-Pin: version 6.19.*
+Pin: version 7.0.*
 Pin-Priority: 999
 EOF
 
