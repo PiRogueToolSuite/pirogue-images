@@ -41,9 +41,13 @@ toast_me() {
 
   ### BEGIN: Pi 5 section
 
-  # Enable backports, since we need a recent kernel (>= 6.18, while Debian 13
-  # ships 6.12) to get basic support for the Pi 5:
-  echo 'deb http://deb.debian.org/debian trixie-backports main non-free-firmware' >> $MNT/etc/apt/sources.list.d/backports.list
+  # Enable backports, since we need a recent kernel (>= 6.19, while Debian 13
+  # ships 6.12) to get basic support for the Pi 5.
+  #
+  # Plot twist, that regressed so we're using a known-working version (see
+  # details in https://github.com/PiRogueToolSuite/pirogue-images/issues/9):
+  # The following gives us 6.19.14+1~bpo13+1.
+  echo 'deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260508T024741Z/ trixie-backports main non-free-firmware' > $MNT/etc/apt/sources.list.d/backports.list
 
   # Preconfigure raspi-firmware to disable the default cma= setting on the
   # kernel command line. Don't run the hook manually, the linux-image install
