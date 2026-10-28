@@ -69,6 +69,20 @@ toast_me() {
   chroot $MNT apt-get install -y -o Dpkg::Options::='--force-overwrite' linux-image-arm64/trixie-backports firmware-brcm80211/trixie-backports
   chroot $MNT apt-get clean
 
+  # Enable regular backports instead of the snapshot ones and configure pinning
+  # accordingly:
+  echo 'deb http://deb.debian.org/debian trixie-backports main non-free-firmware' > $MNT/etc/apt/sources.list.d/backports.list
+  cat <<EOF > $MNT/etc/apt/preferences.d/pirogue-linux-backports.pref
+# This configuration file forces a known-working version to avoid a
+# critical linux-image-* regression in trixie-backports. It will be
+# removed automatically when a fix is available.
+#
+# Link: https://github.com/PiRogueToolSuite/pirogue-images/issues/9
+Package: linux-base-arm64 linux-image-arm64
+Pin: version 6.19.*
+Pin-Priority: 999
+EOF
+
   # Make sure the resize doesn't happen past the first boot
   rm -f $MNT/etc/initramfs-tools/hooks/rpi-resizerootfs
   rm -f $MNT/etc/initramfs-tools/scripts/local-bottom/rpi-resizerootfs
